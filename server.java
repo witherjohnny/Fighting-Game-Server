@@ -2,20 +2,22 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.ArrayList;
 
 public class Server {
     public static final int MAX_PLAYERS = 2;
     public static final int PORT = 12345;
-    private static final int BUFFER_SIZE = 1500;
-    private static ArrayList<Player> players = new ArrayList<>();
+    public static final int BUFFER_SIZE = 1500;
+    private static Players players = new Players();
     public static void main(String[] args) throws IOException {
+        //Semaphore semaphore = new Semaphore(1); 
         DatagramSocket socket = new DatagramSocket(PORT);
         System.out.println("Server avviato sulla porta " + PORT);
 
+        ThreadBroadcast broadcast = new ThreadBroadcast(players, socket);
+        
         byte[] buffer = new byte[BUFFER_SIZE];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
+      
         while (true) { //TODO: gestire concorrenza , thread
             socket.receive(packet);
             String messaggio = new String(packet.getData(), 0, packet.getLength());
@@ -29,29 +31,25 @@ public class Server {
                     inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
 
                     if (players.size() == MAX_PLAYERS) {
-                        for (Player player : players) {
-                            inviaMessaggio("Gioco iniziato", player.getAddress(), player.getPort(), socket);
-                        }
+                        players.startGameMessage(socket);
+                        broadcast.start();
                     }
                 } else {
                     inviaMessaggio("Server pieno", address, port, socket);
                 }
             }else {
+                //esempio messaggio = posX;posY | per ora è solo un esempio, soggetto a modifiche
+                String[] data = messaggio.split(";");
+                float x = Float.parseFloat(data[0]);
+                float y = Float.parseFloat(data[1]);
+                players.setPosition(packet.getAddress(),packet.getPort(),x, y);
                 //TODO: logica di gioco: controlli posizioni e hitbox, rielaborazione e inoltramento all'altro giocatore (o altri giocatori) 
-                inoltraMessaggio(messaggio, address, port, socket);
+                //players.inoltraMessaggio(messaggio, address, port, socket);
             }
         }
     }
 
-    private static void inoltraMessaggio(String messaggio, InetAddress senderAddress, int senderPort, DatagramSocket socket) throws IOException {
-        for (Player player : players) {
-            if (!(player.getAddress().equals(senderAddress) && player.getPort() == senderPort)) {
-                inviaMessaggio(messaggio, player.getAddress(), player.getPort(), socket);
-            }
-        }
-    }
-
-    private static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
+    public static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
         byte[] data = messaggio.getBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
         socket.send(packet);
