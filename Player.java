@@ -4,6 +4,8 @@ public class Player {
     private String id;
     private InetAddress address;
     private int port;
+    private String personaggio;
+    private boolean ready;
     private float x;
     private float y;
 
@@ -11,14 +13,16 @@ public class Player {
         this.address = address;
         this.port = port;
         this.id = address.toString()+port;
+        this.ready =false;
+        this.personaggio = null;
         this.x = x;
         this.y = y;
     }
     public String getId() {
         return id;
     }
-    public String toCSV() {
-        return id+";"+x+";"+y ;
+    public String toCSV() { 
+        return id+";"+x+";"+y+";"+personaggio;
     }
     public InetAddress getAddress() {
         return address;
@@ -42,5 +46,17 @@ public class Player {
 
     public float getY() {
         return y;
+    }
+    public String getPersonaggio() {
+        return personaggio;
+    }
+    public void setPersonaggio(String personaggio) {
+        this.personaggio = personaggio;
+    }
+    public boolean isReady() {
+        return ready;
+    }
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }
