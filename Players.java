@@ -69,6 +69,9 @@ public class Players {
         }
     }
     public boolean isAllReady(){
+        if(players.size() ==0){
+            return false;
+        }
         for (Player player : this.players) {
             if(!player.isReady()){
                 return false;

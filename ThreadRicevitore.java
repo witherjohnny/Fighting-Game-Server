@@ -8,13 +8,13 @@ public class ThreadRicevitore extends Thread{
     private Semaphore semaphore;
     private DatagramSocket socket;
     private Players players;
-    private ThreadBroadcast broadcast;
 
-    public ThreadRicevitore(DatagramSocket socket, Players players, Semaphore semaphore , ThreadBroadcast broadcast){
+
+    public ThreadRicevitore(DatagramSocket socket, Players players, Semaphore semaphore){
         this.socket = socket;
         this.players = players;
         this.semaphore = semaphore;
-        this.broadcast = broadcast;
+
     }
     @Override
     public void run() {
@@ -28,6 +28,8 @@ public class ThreadRicevitore extends Thread{
                 String messaggio = new String(packet.getData(), 0, packet.getLength());
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
+                System.out.println("ricevuto da"+address.toString()+":"+port+":\t"+messaggio);
+
                 //GESTIONE LOGICA PERSONAGGIO DURANTE IL GIOCO
                 if(messaggio.startsWith("playerInfo")){//esempio messaggio = playerInfo;posX;posY | per ora è solo un esempio, soggetto a modifiche
                     String[] data = messaggio.split(";");
@@ -38,7 +40,7 @@ public class ThreadRicevitore extends Thread{
                     semaphore.release();
                     //TODO: logica di gioco: controlli posizioni e hitbox, rielaborazione e inoltramento all'altro giocatore (o altri giocatori) 
                 }
-                //GESTIONE LOGICA CONESSIONE AL SERVER E SCELTA PERSONAGGIO
+                //GESTIONE LOGICA CONNESSIONE AL SERVER E SCELTA PERSONAGGIO
                 else if (messaggio.equals("Join")) {
                     if (players.size() < Server.MAX_PLAYERS) {
                         //notifica a tutti i player gia in gioco che è entrato qualcuno, utile per il utente in modo che sappia che si sia qualcuno dentro e non stia aspettando a vuoto
@@ -46,15 +48,17 @@ public class ThreadRicevitore extends Thread{
                         players.inviaMessaggio("è entrato "+ id, socket);
     
                         //salvataggio informazioni del client che si è connesso in modo da porterlo "riconttattare"
-                        Player nuovoPlayer = new Player(address, port, 0, 0);//TODO: aggiungere delle posizioni fisse di spawn diverse per ogni player
+                        Player nuovoPlayer = new Player(address, port, 0, 0); //TODO: aggiungere delle posizioni fisse di spawn diverse per ogni player
+                        semaphore.acquire();
                         players.add(nuovoPlayer);
+                        semaphore.release();
                         Server.inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
                         
                     } else {
                         Server.inviaMessaggio("Server pieno", address, port, socket);
                     }
                 }
-                else if(messaggio.startsWith("ready")){//esempio messaggio ready;personaggio1 |ready;personaggio2
+                else if(messaggio.startsWith("ready")){//esempio messaggio id;ready;personaggio1 |ready;personaggio2
                     String[] data = messaggio.split(";");
                     String personaggio =data[1];
 
@@ -68,10 +72,7 @@ public class ThreadRicevitore extends Thread{
                     semaphore.release();
                 }
                 
-                if(players.isAllReady()){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
-                    players.inviaMessaggio("Gioco iniziato", socket);
-                    broadcast.setStart(true);
-                }
+                
             }
         } catch (Exception e) {
             // TODO: handle exception

@@ -54,7 +54,7 @@ public class Player {
         this.personaggio = personaggio;
     }
     public boolean isReady() {
-        return ready;
+        return this.ready;
     }
     public void setReady(boolean ready) {
         this.ready = ready;

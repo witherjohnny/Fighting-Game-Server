@@ -13,9 +13,16 @@ public class Server {
         Semaphore semaphore = new Semaphore(1); 
         DatagramSocket socket = new DatagramSocket(PORT);
         ThreadBroadcast threadBroacast = new ThreadBroadcast(socket,players,semaphore);
-        ThreadRicevitore threadRicevitore = new ThreadRicevitore(socket,players,semaphore,threadBroacast);
+        ThreadRicevitore threadRicevitore = new ThreadRicevitore(socket,players,semaphore);
         threadRicevitore.start();
-        threadBroacast.start();
+        
+
+        while (true) {
+            if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
+                players.inviaMessaggio("Gioco iniziato", socket);
+                threadBroacast.start();
+            }
+        }
     }
 
     public static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
