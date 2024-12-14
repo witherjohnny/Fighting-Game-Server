@@ -18,13 +18,15 @@ public class Server {
         
 
         while (true) {
+            
             if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
+                
                 players.inviaMessaggio("Gioco iniziato", socket);
                 threadBroacast.start();
+                break;
             }
         }
     }
-
     public static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
         byte[] data = messaggio.getBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, address, port);

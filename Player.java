@@ -12,7 +12,7 @@ public class Player {
     public Player(InetAddress address, int port, float x, float y) {
         this.address = address;
         this.port = port;
-        this.id = address.toString()+port;
+        this.id = address.toString()+":"+port;
         this.ready =false;
         this.personaggio = null;
         this.x = x;
@@ -23,6 +23,9 @@ public class Player {
     }
     public String toCSV() { 
         return id+";"+x+";"+y+";"+personaggio;
+    }
+    public String toString() { 
+        return id+" " +ready;
     }
     public InetAddress getAddress() {
         return address;

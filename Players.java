@@ -16,7 +16,14 @@ public class Players {
     public int size(){
         return this.players.size();
     }
-
+    public String toString(){
+        String str="";
+        for (Player player : players) {
+            str+= player.toString()+"\n";
+        }
+        str.trim();
+        return str;
+    }
     public synchronized void setPosition(InetAddress address,int port, float x, float y){
         for (Player player : this.players) {
             //ID = indirizzo:porta
@@ -34,6 +41,7 @@ public class Players {
             String id = address.toString()+":"+port;
             String playerID = player.getId();
             if(id.equals(playerID)){
+
                 player.setReady(ready);
             }
         }
@@ -68,7 +76,7 @@ public class Players {
             }
         }
     }
-    public boolean isAllReady(){
+    public synchronized boolean isAllReady(){
         if(players.size() ==0){
             return false;
         }
@@ -79,7 +87,7 @@ public class Players {
         }
         return true;
     }
-    public void inviaMessaggio(String messaggio, DatagramSocket socket)throws IOException{
+    public synchronized void inviaMessaggio(String messaggio, DatagramSocket socket)throws IOException{
         for (Player player : this.players) {
             Server.inviaMessaggio(messaggio, player.getAddress(), player.getPort(), socket);
         }

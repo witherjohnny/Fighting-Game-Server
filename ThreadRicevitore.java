@@ -65,6 +65,7 @@ public class ThreadRicevitore extends Thread{
                     semaphore.acquire();
                     players.setReady(address, port, true);
                     players.setPersonaggio(address, port, personaggio);
+                    //System.out.println(players.toString());
                     semaphore.release();
                 }else if(messaggio.equals("not ready")){ // non è necessario sapere il personaggio scelto
                     semaphore.acquire();
