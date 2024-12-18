@@ -1,7 +1,6 @@
 import java.net.InetAddress;
 
 public class Player {
-    private String id;
     private InetAddress address;
     private int port;
     private String personaggio;
@@ -12,20 +11,19 @@ public class Player {
     public Player(InetAddress address, int port, float x, float y) {
         this.address = address;
         this.port = port;
-        this.id = address.toString()+":"+port;
         this.ready =false;
         this.personaggio = null;
         this.x = x;
         this.y = y;
     }
     public String getId() {
-        return id;
+        return Server.md5(address.toString()+":"+port);
     }
     public String toCSV() { 
-        return id+";"+x+";"+y+";"+personaggio;
+        return getId()+";"+x+";"+y+";"+personaggio;
     }
     public String toString() { 
-        return id+" " +ready;
+        return address.toString()+":"+port+" " +ready;
     }
     public InetAddress getAddress() {
         return address;

@@ -1,7 +1,10 @@
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Semaphore;
 
 public class Server {
@@ -15,7 +18,6 @@ public class Server {
         ThreadBroadcast threadBroacast = new ThreadBroadcast(socket,players,semaphore);
         ThreadRicevitore threadRicevitore = new ThreadRicevitore(socket,players,semaphore);
         threadRicevitore.start();
-        
 
         while (true) {
             
@@ -32,5 +34,24 @@ public class Server {
         DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
         socket.send(packet);
         System.out.println("messaggio inviato a "+address+":"+port+"\t"+messaggio);
+    }
+    public static String md5(String text){
+        try {
+            String plaintext = "your text here";
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.reset();
+            m.update(plaintext.getBytes());
+            byte[] digest = m.digest();
+            BigInteger bigInt = new BigInteger(1,digest);
+            String hashtext = bigInt.toString(16);
+            // Now we need to zero pad it if you actually want the full 32 chars.
+            while(hashtext.length() < 32 ){
+            hashtext = "0"+hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

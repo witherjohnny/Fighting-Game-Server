@@ -62,8 +62,7 @@ public class Players {
                 String sendingTo =player.getId();
                 String message = "";
                 for (Player p : this.players) {
-                    String id = p.getId();
-                    if(!sendingTo.equals(id)){//TODO: fare l'hash del id
+                    if(!sendingTo.equals(p.getId())){
                         message+=p.toCSV()+"\n";//primo campo è l'id necessario al client per distinguere i dati che riceve a chi appartengono (solo in caso di piu di 2 player)
                     }
                 }

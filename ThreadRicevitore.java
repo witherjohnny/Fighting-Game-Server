@@ -44,8 +44,8 @@ public class ThreadRicevitore extends Thread{
                 else if (messaggio.equals("Join")) {
                     if (players.size() < Server.MAX_PLAYERS) {
                         //notifica a tutti i player gia in gioco che è entrato qualcuno, utile per il utente in modo che sappia che si sia qualcuno dentro e non stia aspettando a vuoto
-                        String id = address+":" +port;//TODO: hash id
-                        players.inviaMessaggio("è entrato "+ id, socket);
+                        /* String id = address+":" +port;
+                        players.inviaMessaggio("è entrato "+ id, socket); */
     
                         //salvataggio informazioni del client che si è connesso in modo da porterlo "riconttattare"
                         Player nuovoPlayer = new Player(address, port, 0, 0); //TODO: aggiungere delle posizioni fisse di spawn diverse per ogni player
