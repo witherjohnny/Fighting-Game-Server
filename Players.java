@@ -39,6 +39,7 @@ public class Players {
     public synchronized void setReady(InetAddress address,int port,boolean ready){
         for (Player player : this.players) {
             String id = address.toString()+":"+port;
+            id = Server.md5(id);
             String playerID = player.getId();
             if(id.equals(playerID)){
 
@@ -49,6 +50,7 @@ public class Players {
     public synchronized void setPersonaggio(InetAddress address,int port,String personaggio){
         for (Player player : this.players) {
             String id = address.toString()+":"+port;
+            id = Server.md5(id);
             String playerID = player.getId();
             if(id.equals(playerID)){//TODO: se è un personaggio valido
                 player.setPersonaggio(personaggio);
