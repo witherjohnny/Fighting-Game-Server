@@ -58,6 +58,15 @@ public class ThreadRicevitore extends Thread{
                         Server.inviaMessaggio("Server pieno", address, port, socket);
                     }
                 }
+                //per scollegarsi dal server con messaggio dal client
+                //TODO: scollegamento automatico pingando il client
+                else if(messaggio.equals("leave")){
+                    if(players.remove(address,port)){
+                        System.out.println("è uscito: "+address+":"+port);
+                    }else{
+                        System.out.println("errore in rimozione di: "+address+":"+port);
+                    }
+                }
                 else if(messaggio.startsWith("ready")){//esempio messaggio id;ready;personaggio1 |ready;personaggio2
                     String[] data = messaggio.split(";");
                     String personaggio =data[1];

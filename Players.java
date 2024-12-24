@@ -57,7 +57,28 @@ public class Players {
             }
         }
     }
-    public void broadcastData(DatagramSocket socket){//TODO:  sincronizzare con i vari set
+    public synchronized boolean remove(InetAddress address, int port){
+        String id = address.toString()+":"+port;
+        id = Server.md5(id);
+        Player p = this.find(address, port);
+        if(p != null){
+            players.remove(p);
+            return true;
+        }
+        return false;
+    }
+    public Player find(InetAddress address, int port){
+        for (Player player : players) {
+            String id = address.toString()+":"+port;
+            id = Server.md5(id);
+            String playerID = player.getId();
+            if(id.equals(playerID)){
+                return player;
+            }
+        }
+        return null;
+    }
+    public void broadcastData(DatagramSocket socket){
         for (Player player : this.players) {
             try {
                 //manda tutte le informazioni tranne quelle del destinatario

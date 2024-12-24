@@ -20,7 +20,6 @@ public class Server {
         threadRicevitore.start();
 
         while (true) {
-            
             if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
                 
                 players.inviaMessaggio("Gioco iniziato", socket);
