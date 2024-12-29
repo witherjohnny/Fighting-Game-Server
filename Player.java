@@ -8,12 +8,12 @@ public class Player {
     private int port;
     private String personaggio;
     private boolean ready;
-    private float x;
-    private float y;
+    private int x;
+    private int y;
     private Direction direction;
     private Action action;
     
-    public Player(InetAddress address, int port, float x, float y) {
+    public Player(InetAddress address, int port, int x, int y) {
         this.address = address;
         this.port = port;
         this.ready =false;
@@ -40,19 +40,19 @@ public class Player {
         return port;
     }
 
-    public void setX(float x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(float y) {
+    public void setY(int y) {
         this.y = y;
     }
 
-    public float getX() {
+    public int getX() {
         return x;
     }
 
-    public float getY() {
+    public int getY() {
         return y;
     }
     public String getPersonaggio() {

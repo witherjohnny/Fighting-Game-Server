@@ -10,7 +10,7 @@ public class Players {
     public Players(){
         this.players= new ArrayList<Player>();
     }
-    public void add(Player player){
+    public synchronized void add(Player player){
         this.players.add(player);
     } 
     public int size(){
@@ -24,7 +24,7 @@ public class Players {
         str.trim();
         return str;
     }
-    public synchronized void setPosition(InetAddress address,int port, float x, float y){
+    public synchronized void setPosition(InetAddress address,int port, int x, int y){
         for (Player player : this.players) {
             //ID = indirizzo:porta
             //esempio 192.168.1.10:54321
@@ -78,7 +78,7 @@ public class Players {
         }
         return null;
     }
-    public void broadcastData(DatagramSocket socket){
+    public synchronized void broadcastData(DatagramSocket socket){
         for (Player player : this.players) {
             try {
                 //manda tutte le informazioni tranne quelle del destinatario

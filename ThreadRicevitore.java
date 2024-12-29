@@ -33,8 +33,8 @@ public class ThreadRicevitore extends Thread{
                 //GESTIONE LOGICA PERSONAGGIO DURANTE IL GIOCO
                 if(messaggio.startsWith("playerInfo")){//esempio messaggio = playerInfo;posX;posY | per ora è solo un esempio, soggetto a modifiche
                     String[] data = messaggio.split(";");
-                    float x = Float.parseFloat(data[1]);
-                    float y = Float.parseFloat(data[2]);
+                    int x = Integer.parseInt(data[1]);
+                    int y = Integer.parseInt(data[2]);
                     semaphore.acquire();
                     players.setPosition(packet.getAddress(),packet.getPort(),x, y);
                     semaphore.release();

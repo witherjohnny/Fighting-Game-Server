@@ -3,11 +3,11 @@ import java.net.InetAddress;
 public class Hitbox {
     private InetAddress address;
     private int port;
-    private float x;
-    private float y;
-    private float witdh;
-    private float height;
-    public Hitbox(InetAddress address, int port, float x, float y, float width, float height) {
+    private int x;
+    private int y;
+    private int witdh;
+    private int height;
+    public Hitbox(InetAddress address, int port, int x, int y, int width, int height) {
         this.address = address;
         this.port = port;
         this.x = x;
@@ -27,28 +27,28 @@ public class Hitbox {
     public void setPort(int port) {
         this.port = port;
     }
-    public float getX() {
+    public int getX() {
         return x;
     }
-    public void setX(float x) {
+    public void setX(int x) {
         this.x = x;
     }
-    public float getY() {
+    public int getY() {
         return y;
     }
-    public void setY(float y) {
+    public void setY(int y) {
         this.y = y;
     }
-    public float getWitdh() {
+    public int getWitdh() {
         return witdh;
     }
-    public void setWitdh(float witdh) {
+    public void setWitdh(int witdh) {
         this.witdh = witdh;
     }
-    public float getHeight() {
+    public int getHeight() {
         return height;
     }
-    public void setHeight(float height) {
+    public void setHeight(int height) {
         this.height = height;
     }
     public boolean collideWith(Hitbox hitbox){
