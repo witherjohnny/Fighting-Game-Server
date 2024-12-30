@@ -1,24 +1,26 @@
 package Data;
 
-import java.io.StringReader;
-import java.io.File;
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
+
 public class CharactersData {
 
     // List to hold Character objects
     public static List<Character> characters = null;
 
-    // Method to load characters from a JSON file
-    public static void loadCharacters(String filePath) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            characters = objectMapper.readValue(new File(filePath), new TypeReference<List<Character>>() {});
-        } catch (IOException e) {
-            System.out.println("Error loading JSON: " + e.getMessage());
-        }
+    public static void loadCharacters(String filePath) {//JSON non funziona, serve un progetto maven o gradle
+        // Manually create Character objects and add to the list
+        characters.add(new Character(
+            "FireWizard", 
+            Arrays.asList("Idle", "Run", "Jump", "Dead", "Hurt", "Rest", "Roll", "Walk"),
+            Arrays.asList("Fireball", "Flame_Jet", "AreaAttack", "Attack_1", "Attack_2")
+        ));
+        
+        characters.add(new Character(
+            "Warrior_2", 
+            Arrays.asList("Idle", "Run", "Jump", "Dead", "Hurt", "Rest", "Roll", "Walk"),
+            Arrays.asList("AreaAttack", "Attack_1", "Attack_2", "Run+Attack", "Protect")
+        ));
     }
 
 
