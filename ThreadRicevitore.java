@@ -31,10 +31,12 @@ public class ThreadRicevitore extends Thread{
                 System.out.println("ricevuto da"+address.toString()+":"+port+":\t"+messaggio);
 
                 //GESTIONE LOGICA PERSONAGGIO DURANTE IL GIOCO
-                if(messaggio.startsWith("playerInfo")){//esempio messaggio = playerInfo;posX;posY | per ora è solo un esempio, soggetto a modifiche
+                if(messaggio.startsWith("playerInfo")){//esempio messaggio = playerInfo;posX;posY;direction;action  // soggetto a modifiche
                     String[] data = messaggio.split(";");
                     int x = Integer.parseInt(data[1]);
                     int y = Integer.parseInt(data[2]);
+                    int direction = Integer.parseInt(data[3]);
+                    String action = data[4];
                     semaphore.acquire();
                     players.setPosition(packet.getAddress(),packet.getPort(),x, y);
                     semaphore.release();

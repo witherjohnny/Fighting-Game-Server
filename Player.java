@@ -1,6 +1,7 @@
 import java.net.InetAddress;
 
-import Enum.Action;
+import Data.Character;
+import Data.CharactersData;
 import Enum.Direction;
 
 public class Player {
@@ -11,7 +12,7 @@ public class Player {
     private int x;
     private int y;
     private Direction direction;
-    private Action action;
+    private String action;
     
     public Player(InetAddress address, int port, int x, int y) {
         this.address = address;
@@ -21,7 +22,8 @@ public class Player {
         this.x = x;
         this.y = y;
         this.direction = Direction.Right;
-        this.action = Action.Idle;
+        this.action = "";
+
     }
     public String getId() {
         return Server.md5(address.toString()+":"+port);
@@ -70,7 +72,18 @@ public class Player {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
-    public void setAction(Action action) {
-        this.action = action;
+    public void setAction(String action) {
+        Character character = CharactersData.characters.stream()
+                .filter(c -> c.getName().equals(personaggio))
+                .findFirst()
+                .orElse(null);  // Return null if not found
+        if(character == null){
+            System.out.println("Personaggio non settato o non valido. in setAction");
+        }
+        if(character.getBaseActions().contains(action) || character.getAttacks().contains(action)) {
+            this.action = action;
+        }else{
+            System.out.println("Errore in setAction: action non valida");
+        }
     }
 }
