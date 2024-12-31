@@ -25,6 +25,7 @@ public class ThreadRicevitore extends Thread{
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             while (true) { 
                 socket.receive(packet);
+                semaphore.acquire();
                 String messaggio = new String(packet.getData(), 0, packet.getLength());
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
@@ -37,9 +38,9 @@ public class ThreadRicevitore extends Thread{
                     int y = Integer.parseInt(data[2]);
                     int direction = Integer.parseInt(data[3]);
                     String action = data[4];
-                    semaphore.acquire();
+                    
                     players.setPosition(packet.getAddress(),packet.getPort(),x, y);
-                    semaphore.release();
+                    
                     //TODO: logica di gioco: controlli posizioni e hitbox, rielaborazione e inoltramento all'altro giocatore (o altri giocatori) 
                 }
                 //GESTIONE LOGICA CONNESSIONE AL SERVER E SCELTA PERSONAGGIO
@@ -51,9 +52,7 @@ public class ThreadRicevitore extends Thread{
     
                         //salvataggio informazioni del client che si è connesso in modo da porterlo "riconttattare"
                         Player nuovoPlayer = new Player(address, port, 0, 0); //TODO: aggiungere delle posizioni fisse di spawn diverse per ogni player
-                        semaphore.acquire();
                         players.add(nuovoPlayer);
-                        semaphore.release();
                         Server.inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
                         
                     } else {
@@ -69,21 +68,19 @@ public class ThreadRicevitore extends Thread{
                         System.out.println("errore in rimozione di: "+address+":"+port);
                     }
                 }
-                else if(messaggio.startsWith("ready")){//esempio messaggio id;ready;personaggio1 |ready;personaggio2
+                else if(messaggio.startsWith("ready")){//esempio messaggio ready;personaggio1 
                     String[] data = messaggio.split(";");
                     String personaggio =data[1];
 
-                    semaphore.acquire();
                     players.setReady(address, port, true);
                     players.setPersonaggio(address, port, personaggio);
                     //System.out.println(players.toString());
-                    semaphore.release();
                 }else if(messaggio.equals("not ready")){ // non è necessario sapere il personaggio scelto
-                    semaphore.acquire();
+                    
                     players.setReady(address, port, false);
-                    semaphore.release();
+                    
                 }
-                
+                semaphore.release();
                 
             }
         } catch (Exception e) {

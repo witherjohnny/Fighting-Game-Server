@@ -20,23 +20,35 @@ public class Server {
         threadRicevitore.start();
 
         while (true) {
-            if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
-                
-                players.inviaMessaggio("Gioco iniziato", socket);
-                threadBroadcast.start();
-                break;
+            try {
+                semaphore.acquire();
+                if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
+                    players.inviaMessaggio("Gioco iniziato", socket);
+                    threadBroadcast.start();
+                    break;
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+            }finally {
+                semaphore.release();
             }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
         }
     }
-    public static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
+    public synchronized static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
         byte[] data = messaggio.getBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
         socket.send(packet);
         System.out.println("messaggio inviato a "+address+":"+port+"\t"+messaggio);
     }
-    public static String md5(String text){
+    public synchronized static String md5(String text){
         try {
-            String plaintext = "your text here";
+            String plaintext = text;
             MessageDigest m = MessageDigest.getInstance("MD5");
             m.reset();
             m.update(plaintext.getBytes());

@@ -33,6 +33,7 @@ public class Players {
             if(id.equals(playerID)){
                 player.setX(x);
                 player.setY(y);
+                break;
             }
         }
     }
@@ -42,8 +43,8 @@ public class Players {
             id = Server.md5(id);
             String playerID = player.getId();
             if(id.equals(playerID)){
-
                 player.setReady(ready);
+                break;
             }
         }
     }
@@ -54,6 +55,7 @@ public class Players {
             String playerID = player.getId();
             if(id.equals(playerID)){//TODO: se è un personaggio valido
                 player.setPersonaggio(personaggio);
+                break;
             }
         }
     }
@@ -98,15 +100,16 @@ public class Players {
             }
         }
     }
-    public synchronized boolean isAllReady(){
-        if(players.size() ==0){
+    public synchronized boolean isAllReady() {
+        if (players.size() == 0) {
             return false;
         }
         for (Player player : this.players) {
-            if(!player.isReady()){
+            if (!player.isReady()) {
                 return false;
             }
         }
+        
         return true;
     }
     public synchronized void inviaMessaggio(String messaggio, DatagramSocket socket)throws IOException{
