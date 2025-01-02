@@ -92,6 +92,7 @@ public class Players {
                     }
                 }
                 message.trim();
+                //System.out.println(message);
                 byte[] buffer = message.getBytes();
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.getAddress(), player.getPort());
                 socket.send(packet);

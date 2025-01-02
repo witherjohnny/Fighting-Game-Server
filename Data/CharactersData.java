@@ -13,13 +13,15 @@ public class CharactersData {
         characters.add(new Character(
             "FireWizard", 
             Arrays.asList("Idle", "Run", "Jump", "Dead", "Hurt", "Rest", "Roll", "Walk"),
-            Arrays.asList("Fireball", "Flame_Jet", "AreaAttack", "Attack_1", "Attack_2")
+            Arrays.asList("Fireball", "Flame_Jet", "AreaAttack", "Attack_1", "Attack_2"),
+            Arrays.asList("Charge")
         ));
         
         characters.add(new Character(
             "Warrior_2", 
             Arrays.asList("Idle", "Run", "Jump", "Dead", "Hurt", "Rest", "Roll", "Walk"),
-            Arrays.asList("AreaAttack", "Attack_1", "Attack_2", "Run+Attack", "Protect")
+            Arrays.asList("AreaAttack", "Attack_1", "Attack_2", "Run+Attack", "Protect"),
+            Arrays.asList()
         ));
     }
 

@@ -6,12 +6,14 @@ public class Character {
     private String name;
     private List<String> baseActions;
     private List<String> attacks;
+    private List<String> projectiles;
 
     // Constructor
-    public Character(String name, List<String> baseActions, List<String> attacks) {
+    public Character(String name, List<String> baseActions, List<String> attacks, List<String> projectiles) {
         this.name = name;
         this.baseActions = baseActions;
         this.attacks = attacks;
+        this.projectiles = projectiles;
     }
 
     // Getter and Setter methods for name

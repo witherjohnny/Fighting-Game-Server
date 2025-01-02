@@ -22,7 +22,7 @@ public class Player {
         this.x = x;
         this.y = y;
         this.direction = Direction.Right;
-        this.action = "";
+        this.action = "Idle";
 
     }
     public String getId() {

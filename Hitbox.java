@@ -5,14 +5,14 @@ public class Hitbox {
     private int port;
     private int x;
     private int y;
-    private int witdh;
+    private int width;
     private int height;
     public Hitbox(InetAddress address, int port, int x, int y, int width, int height) {
         this.address = address;
         this.port = port;
         this.x = x;
         this.y = y;
-        this.witdh = witdh;
+        this.width = width;
         this.height = height;
     }
     public InetAddress getAddress() {
@@ -39,11 +39,11 @@ public class Hitbox {
     public void setY(int y) {
         this.y = y;
     }
-    public int getWitdh() {
-        return witdh;
+    public int getWidth() {
+        return width;
     }
-    public void setWitdh(int witdh) {
-        this.witdh = witdh;
+    public void setWidth(int width) {
+        this.width = width;
     }
     public int getHeight() {
         return height;
@@ -51,10 +51,21 @@ public class Hitbox {
     public void setHeight(int height) {
         this.height = height;
     }
-    public boolean collideWith(Hitbox hitbox){
-        return false;
+    public boolean collideWith(Hitbox hitbox) {
+        return this.x < hitbox.getX() + hitbox.getWidth() &&
+               this.x + this.width > hitbox.getX() &&
+               this.y < hitbox.getY() + hitbox.getHeight() &&
+               this.y + this.height > hitbox.getY();
     }
-    
+    @Override
+    public String toString() {
+        return "Hitbox{" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 
 
 
