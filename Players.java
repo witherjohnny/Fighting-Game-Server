@@ -29,6 +29,7 @@ public class Players {
             //ID = indirizzo:porta
             //esempio 192.168.1.10:54321
             String id = address.toString()+":"+port;
+            id = Server.md5(id);
             String playerID = player.getId();
             if(id.equals(playerID)){
                 player.setX(x);
@@ -92,6 +93,7 @@ public class Players {
                     }
                 }
                 message.trim();
+                //Server.inviaMessaggio(message, player.getAddress(), player.getPort(), socket);
                 //System.out.println(message);
                 byte[] buffer = message.getBytes();
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.getAddress(), player.getPort());

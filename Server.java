@@ -11,6 +11,7 @@ public class Server {
     public static final int MAX_PLAYERS = 2;
     public static final int PORT = 12345;
     public static final int BUFFER_SIZE = 1500;
+    public static boolean gameStarted = false;
     private static Players players = new Players();
     public static void main(String[] args) throws IOException {
         Semaphore semaphore = new Semaphore(1); 
@@ -21,21 +22,16 @@ public class Server {
 
         while (true) {
             try {
-                semaphore.acquire();
-                if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
-                    players.inviaMessaggio("Gioco iniziato", socket);
-                    threadBroadcast.start();
-                    break;
+                if(!gameStarted){
+                    if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
+                        gameStarted = true;
+                        players.inviaMessaggio("Gioco iniziato", socket);
+                        threadBroadcast.start();
+                    }
+                    Thread.sleep(100);
                 }
             } catch (Exception e) {
                 // TODO: handle exception
-            }finally {
-                semaphore.release();
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
             
         }

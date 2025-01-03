@@ -3,6 +3,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.Semaphore;
 
+import Enum.Direction;
+
 
 public class ThreadRicevitore extends Thread{
     private Semaphore semaphore;
@@ -18,12 +20,13 @@ public class ThreadRicevitore extends Thread{
     }
     @Override
     public void run() {
-        try {
-            System.out.println("Server avviato sulla porta " + Server.PORT);
-            //ThreadBroadcast broadcast = new ThreadBroadcast(players, socket);
-            byte[] buffer = new byte[Server.BUFFER_SIZE];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-            while (true) { 
+        
+        System.out.println("Server avviato sulla porta " + Server.PORT);
+        //ThreadBroadcast broadcast = new ThreadBroadcast(players, socket);
+        byte[] buffer = new byte[Server.BUFFER_SIZE];
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        while (true) { 
+            try {
                 socket.receive(packet);
                 semaphore.acquire();
                 String messaggio = new String(packet.getData(), 0, packet.getLength());
@@ -36,7 +39,7 @@ public class ThreadRicevitore extends Thread{
                     String[] data = messaggio.split(";");
                     int x = Integer.parseInt(data[1]);
                     int y = Integer.parseInt(data[2]);
-                    int direction = Integer.parseInt(data[3]);
+                    Direction direction = data[3]=="Right"? Direction.Right: Direction.Left;
                     String action = data[4];
                     
                     players.setPosition(packet.getAddress(),packet.getPort(),x, y);
@@ -63,6 +66,7 @@ public class ThreadRicevitore extends Thread{
                 //TODO: scollegamento automatico pingando il client
                 else if(messaggio.equals("leave")){
                     if(players.remove(address,port)){
+                        Server.gameStarted = false;
                         System.out.println("è uscito: "+address+":"+port);
                     }else{
                         System.out.println("errore in rimozione di: "+address+":"+port);
@@ -81,15 +85,11 @@ public class ThreadRicevitore extends Thread{
                     
                 }
                 semaphore.release();
-                
+            } catch (Exception e) {
+                // TODO: handle exception
             }
-        } catch (Exception e) {
-            // TODO: handle exception
         }
+
     }
 
-
-
-
-    
 }
