@@ -42,4 +42,14 @@ public class Character {
     public void setAttacks(List<String> attacks) {
         this.attacks = attacks;
     }
+    
+    // Getter and Setter methods for projectiles
+    public List<String> getProjectiles() {
+        return projectiles;
+    }
+    public void setProjectiles(List<String> projectiles) {
+        this.projectiles = projectiles;
+    }
+
+
 }

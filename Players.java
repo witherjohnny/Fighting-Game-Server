@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
+import Enum.Direction;
+
 public class Players {
     private ArrayList<Player> players;
 
@@ -38,6 +40,30 @@ public class Players {
             }
         }
     }
+    public synchronized void setDirection(InetAddress address,int port, Direction direction){
+        for (Player player : this.players) {
+            //ID = indirizzo:porta
+            //esempio 192.168.1.10:54321
+            String id = address.toString()+":"+port;
+            id = Server.md5(id);
+            String playerID = player.getId();
+            if(id.equals(playerID)){
+                player.setDirection(direction);
+                break;
+            }
+        }
+    }
+    public synchronized void setAction(InetAddress address,int port, String action){
+        for (Player player : this.players) {
+            String id = address.toString()+":"+port;
+            id = Server.md5(id);
+            String playerID = player.getId();
+            if(id.equals(playerID)){
+                player.setAction(action);
+                break;
+            }
+        }
+    }
     public synchronized void setReady(InetAddress address,int port,boolean ready){
         for (Player player : this.players) {
             String id = address.toString()+":"+port;
@@ -54,7 +80,7 @@ public class Players {
             String id = address.toString()+":"+port;
             id = Server.md5(id);
             String playerID = player.getId();
-            if(id.equals(playerID)){//TODO: se è un personaggio valido
+            if(id.equals(playerID)){
                 player.setPersonaggio(personaggio);
                 break;
             }
@@ -81,6 +107,16 @@ public class Players {
         }
         return null;
     }
+    public synchronized void sendClientInitializationData(DatagramSocket socket){
+        for (Player player : this.players) {
+            try {
+                String message="local;"+player.toCSV();
+                Server.inviaMessaggio(message, player.getAddress(), player.getPort(), socket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public synchronized void broadcastData(DatagramSocket socket){
         for (Player player : this.players) {
             try {
@@ -89,7 +125,7 @@ public class Players {
                 String message = "";
                 for (Player p : this.players) {
                     if(!sendingTo.equals(p.getId())){
-                        message+=p.toCSV()+"\n";//primo campo è l'id necessario al client per distinguere i dati che riceve a chi appartengono (solo in caso di piu di 2 player)
+                        message+="remote;"+p.toCSV()+"\n";
                     }
                 }
                 message.trim();

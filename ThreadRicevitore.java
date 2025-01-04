@@ -16,7 +16,6 @@ public class ThreadRicevitore extends Thread{
         this.socket = socket;
         this.players = players;
         this.semaphore = semaphore;
-
     }
     @Override
     public void run() {
@@ -39,10 +38,11 @@ public class ThreadRicevitore extends Thread{
                     String[] data = messaggio.split(";");
                     int x = Integer.parseInt(data[1]);
                     int y = Integer.parseInt(data[2]);
-                    Direction direction = data[3]=="Right"? Direction.Right: Direction.Left;
+                    Direction direction = Direction.valueOf(data[3]);
                     String action = data[4];
-                    
                     players.setPosition(packet.getAddress(),packet.getPort(),x, y);
+                    players.setDirection(address, port, direction);
+                    players.setAction(address, port, action);
                     
                     //TODO: logica di gioco: controlli posizioni e hitbox, rielaborazione e inoltramento all'altro giocatore (o altri giocatori) 
                 }
@@ -54,10 +54,19 @@ public class ThreadRicevitore extends Thread{
                         players.inviaMessaggio("è entrato "+ id, socket); */
     
                         //salvataggio informazioni del client che si è connesso in modo da porterlo "riconttattare"
-                        Player nuovoPlayer = new Player(address, port, 0, 0); //TODO: aggiungere delle posizioni fisse di spawn diverse per ogni player
-                        players.add(nuovoPlayer);
-                        Server.inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
-                        
+                        Player nuovoPlayer = null;
+                        if(players.size() ==0){
+                            nuovoPlayer = new Player(address, port, 100, 300,Direction.Right, "Idle"); 
+                        }else if(players.size() ==1){
+                            nuovoPlayer = new Player(address, port, 600, 300,Direction.Left, "Idle"); 
+                        }
+                        if(nuovoPlayer != null){
+                            players.add(nuovoPlayer);
+                            Server.inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
+                        }
+                        else{
+                            System.out.println("errore in creazione nuovo player");
+                        }
                     } else {
                         Server.inviaMessaggio("Server pieno", address, port, socket);
                     }
@@ -66,7 +75,7 @@ public class ThreadRicevitore extends Thread{
                 //TODO: scollegamento automatico pingando il client
                 else if(messaggio.equals("leave")){
                     if(players.remove(address,port)){
-                        Server.gameStarted = false;
+                        
                         System.out.println("è uscito: "+address+":"+port);
                     }else{
                         System.out.println("errore in rimozione di: "+address+":"+port);
@@ -78,15 +87,20 @@ public class ThreadRicevitore extends Thread{
 
                     players.setReady(address, port, true);
                     players.setPersonaggio(address, port, personaggio);
-                    //System.out.println(players.toString());
                 }else if(messaggio.equals("not ready")){ // non è necessario sapere il personaggio scelto
                     
                     players.setReady(address, port, false);
                     
+                }else if(messaggio.equals("GameLoaded")){
+                    Player player = players.find(address, port);
+                    String message="local;"+player.toCSV();
+                    Server.inviaMessaggio(message, player.getAddress(), player.getPort(), socket);
                 }
-                semaphore.release();
+                
             } catch (Exception e) {
-                // TODO: handle exception
+                
+            }finally{
+                semaphore.release();
             }
         }
 

@@ -14,15 +14,15 @@ public class Player {
     private Direction direction;
     private String action;
     
-    public Player(InetAddress address, int port, int x, int y) {
+    public Player(InetAddress address, int port, int x, int y, Direction direction, String action) {
         this.address = address;
         this.port = port;
         this.ready =false;
         this.personaggio = null;
         this.x = x;
         this.y = y;
-        this.direction = Direction.Right;
-        this.action = "Idle";
+        this.direction = direction;
+        this.action = action;
 
     }
     public String getId() {
@@ -61,6 +61,14 @@ public class Player {
         return personaggio;
     }
     public void setPersonaggio(String personaggio) {
+        Character character = CharactersData.characters.stream()
+                .filter(c -> c.getName().equals(personaggio))
+                .findFirst()
+                .orElse(null);  // Return null if not found
+        if(character == null){
+            System.out.println("Errore in setPersonaggio: personaggio non valido. ");
+            return;
+        }
         this.personaggio = personaggio;
     }
     public boolean isReady() {
@@ -78,7 +86,8 @@ public class Player {
                 .findFirst()
                 .orElse(null);  // Return null if not found
         if(character == null){
-            System.out.println("Personaggio non settato o non valido. in setAction");
+            System.out.println("Errore in setAction: Personaggio non settato o non valido.");
+            return;
         }
         if(character.getBaseActions().contains(action) || character.getAttacks().contains(action)) {
             this.action = action;
