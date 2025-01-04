@@ -3,20 +3,24 @@ import java.net.InetAddress;
 public class Hitbox {
     private InetAddress address;
     private int port;
+    private String id;
+    private String name;
     private int x;
     private int y;
     private int width;
     private int height;
-    public Hitbox(InetAddress address, int port, int x, int y, int width, int height) {
+    public Hitbox(String id,InetAddress address, int port,String name, int x, int y, int width, int height) {
         this.address = address;
         this.port = port;
+        this.id = id;
+        this.name=name;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
-    public InetAddress getAddress() {
-        return address;
+    public String toCSV() {
+        return id+ ";" + name + ";" + x + ";" + y + ";" + width + ";" + height;
     }
     public void setAddress(InetAddress address) {
         this.address = address;
@@ -66,8 +70,22 @@ public class Hitbox {
                 ", height=" + height +
                 '}';
     }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+  
 
-
-
+    public String getOwner() {
+        return Server.md5(address.toString() + ":" + port);
+    }
+    public InetAddress getAddress() {
+        return address;
+    }
+    public String getId() {
+        return id;
+    }
 
 }

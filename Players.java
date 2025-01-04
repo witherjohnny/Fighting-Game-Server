@@ -1,9 +1,9 @@
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
+import Data.HitboxDamageData;
 import Enum.Direction;
 
 public class Players {
@@ -42,8 +42,6 @@ public class Players {
     }
     public synchronized void setDirection(InetAddress address,int port, Direction direction){
         for (Player player : this.players) {
-            //ID = indirizzo:porta
-            //esempio 192.168.1.10:54321
             String id = address.toString()+":"+port;
             id = Server.md5(id);
             String playerID = player.getId();
@@ -86,6 +84,16 @@ public class Players {
             }
         }
     }
+    public synchronized void setHitbox(InetAddress address,int port,Hitbox hitbox){
+        for (Player player : this.players) {
+            String id = address.toString()+":"+port;
+            id = Server.md5(id);
+            String playerID = player.getId();
+            if(id.equals(playerID)){
+                break;
+            }
+        }
+    }
     public synchronized boolean remove(InetAddress address, int port){
         String id = address.toString()+":"+port;
         id = Server.md5(id);
@@ -122,18 +130,16 @@ public class Players {
             try {
                 //manda tutte le informazioni tranne quelle del destinatario
                 String sendingTo =player.getId();
-                String message = "";
+                String message = "playerInfo\n";
                 for (Player p : this.players) {
                     if(!sendingTo.equals(p.getId())){
                         message+="remote;"+p.toCSV()+"\n";
+                    }else{
+                        message+="local;"+p.toCSV()+"\n";
                     }
                 }
                 message.trim();
-                //Server.inviaMessaggio(message, player.getAddress(), player.getPort(), socket);
-                //System.out.println(message);
-                byte[] buffer = message.getBytes();
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.getAddress(), player.getPort());
-                socket.send(packet);
+                Server.inviaMessaggio(message, player.getAddress(), player.getPort(), socket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -156,11 +162,25 @@ public class Players {
             Server.inviaMessaggio(messaggio, player.getAddress(), player.getPort(), socket);
         }
     }
-    /* public void inoltraMessaggio(String messaggio, InetAddress senderAddress, int senderPort, DatagramSocket socket) throws IOException {
-        for (Player player : this.players) {
-            if (!(player.getAddress().equals(senderAddress) && player.getPort() == senderPort)) {
-                Server.inviaMessaggio(messaggio, player.getAddress(), player.getPort(), socket);
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+    public void handleHitboxes(ArrayList<Hitbox> hitboxes, DatagramSocket socket){
+        for (Player player : players) {
+            for (Hitbox hitbox : hitboxes) {
+                if(hitbox.getOwner().equals(player.getId())){
+                    continue;
+                }
+                else if(player.getHitbox().collideWith(hitbox)){
+                    int damage =HitboxDamageData.getDamage(hitbox.getName());
+                    player.damage(damage);
+                    try {
+                        Server.inviaMessaggio("Hurt", player.getAddress(), player.getPort(), socket);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
-    } */
+    }
 }

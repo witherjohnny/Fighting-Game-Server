@@ -43,8 +43,30 @@ public class ThreadRicevitore extends Thread{
                     players.setPosition(packet.getAddress(),packet.getPort(),x, y);
                     players.setDirection(address, port, direction);
                     players.setAction(address, port, action);
-                    
-                    //TODO: logica di gioco: controlli posizioni e hitbox, rielaborazione e inoltramento all'altro giocatore (o altri giocatori) 
+                }else if(messaggio.startsWith("hitboxes")){
+                    String[] righe = messaggio.split("\n");
+                    for (int i = 1; i < righe.length; i++) {
+                        String[] data = righe[i].split(";");
+                        String id = data[0];
+                        String name = data[1];
+                        int x = Integer.parseInt(data[2]);
+                        int y = Integer.parseInt(data[3]);
+                        int width = Integer.parseInt(data[4]);
+                        int height = Integer.parseInt(data[5]);
+                        //cerca nei hitbox gia presenti se esiste un hitbox con lo stesso id
+                        Hitbox existsingHitbox =Server.hitboxes.stream()
+                        .filter(h -> h.getId().equals(id))
+                        .findFirst()
+                        .orElse(null);
+                        //se non esiste lo aggiunge, altrimenti aggiorna la posizione
+                        if(existsingHitbox == null){
+                            Hitbox hitbox = new Hitbox(id,address,port, name, x, y, width, height);
+                            Server.hitboxes.add(hitbox);
+                        }else{
+                            existsingHitbox.setX(x);
+                            existsingHitbox.setY(y);
+                        }
+                    }
                 }
                 //GESTIONE LOGICA CONNESSIONE AL SERVER E SCELTA PERSONAGGIO
                 else if (messaggio.equals("Join")) {
@@ -56,9 +78,9 @@ public class ThreadRicevitore extends Thread{
                         //salvataggio informazioni del client che si è connesso in modo da porterlo "riconttattare"
                         Player nuovoPlayer = null;
                         if(players.size() ==0){
-                            nuovoPlayer = new Player(address, port, 100, 300,Direction.Right, "Idle"); 
+                            nuovoPlayer = new Player(address, port, 300, 300,128,128,Direction.Right, "Idle",100); 
                         }else if(players.size() ==1){
-                            nuovoPlayer = new Player(address, port, 600, 300,Direction.Left, "Idle"); 
+                            nuovoPlayer = new Player(address, port, 800, 300,128,128,Direction.Left, "Idle",100); 
                         }
                         if(nuovoPlayer != null){
                             players.add(nuovoPlayer);
@@ -98,7 +120,7 @@ public class ThreadRicevitore extends Thread{
                 }
                 
             } catch (Exception e) {
-                
+                System.out.println("errore in ricezione: "+e.toString());
             }finally{
                 semaphore.release();
             }

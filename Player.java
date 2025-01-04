@@ -13,8 +13,9 @@ public class Player {
     private int y;
     private Direction direction;
     private String action;
-    
-    public Player(InetAddress address, int port, int x, int y, Direction direction, String action) {
+    private int health;
+    private Hitbox hitbox;
+    public Player(InetAddress address, int port, int x, int y, int width,int height,Direction direction, String action,int health) {
         this.address = address;
         this.port = port;
         this.ready =false;
@@ -23,13 +24,14 @@ public class Player {
         this.y = y;
         this.direction = direction;
         this.action = action;
-
+        this.health= health;
+        this.hitbox = new Hitbox(getId(),address, port, personaggio, x, y, width, height);
     }
     public String getId() {
         return Server.md5(address.toString()+":"+port);
     }
     public String toCSV() { 
-        return getId()+";"+x+";"+y+";"+personaggio+";"+direction+";"+action;
+        return getId()+";"+x+";"+y+";"+personaggio+";"+direction+";"+action+";"+health+";"+hitbox.getWidth()+";"+hitbox.getHeight();
     }
     public String toString() { 
         return address.toString()+":"+port+" " +ready;
@@ -44,10 +46,12 @@ public class Player {
 
     public void setX(int x) {
         this.x = x;
+        this.hitbox.setX(x);
     }
 
     public void setY(int y) {
         this.y = y;
+        this.hitbox.setY(y);
     }
 
     public int getX() {
@@ -93,6 +97,27 @@ public class Player {
             this.action = action;
         }else{
             System.out.println("Errore in setAction: action non valida");
+        }
+    }
+    public int getHealth(){
+        return this.health;
+    }
+    public void setHealth(int health){
+        this.health = health;
+    }
+    public Direction getDirection() {
+        return direction;
+    }
+    public String getAction() {
+        return action;
+    }
+    public Hitbox getHitbox() {
+        return hitbox;
+    }
+    public void damage(int damage) {
+        this.health -= damage;
+        if (this.health < 0) {
+            this.health = 0;
         }
     }
 }

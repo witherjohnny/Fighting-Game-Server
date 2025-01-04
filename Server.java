@@ -5,6 +5,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import Data.CharactersData;
@@ -15,6 +16,7 @@ public class Server {
     public static final int BUFFER_SIZE = 1500;
     public static boolean gameStarted = false;
     private static Players players = new Players();
+    public static ArrayList<Hitbox> hitboxes = new ArrayList<Hitbox>();
     public static void main(String[] args) throws IOException {
         CharactersData.loadCharacters();
         Semaphore semaphore = new Semaphore(1); 
@@ -38,18 +40,17 @@ public class Server {
                         players.inviaMessaggio("Gioco iniziato", socket);
                         threadBroadcast.start();
                     }   
+                }else{
+                    players.handleHitboxes(hitboxes,socket);
                 }
+
             } catch (Exception e) {
             }finally{
                 semaphore.release();
             }
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-            }
-            
         }
     }
+    
     public synchronized static void inviaMessaggio(String messaggio, InetAddress address, int port, DatagramSocket socket) throws IOException {
         byte[] data = messaggio.getBytes();
         DatagramPacket packet = new DatagramPacket(data, data.length, address, port);

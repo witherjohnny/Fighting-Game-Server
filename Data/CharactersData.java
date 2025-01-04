@@ -25,6 +25,8 @@ public class CharactersData {
                 Arrays.asList("AreaAttack", "Attack_1", "Attack_2", "Run+Attack", "Protect"),
                 Arrays.asList()
         ));
+        
+        HitboxDamageData.loadHitboxDamageData();
     }
 
     // Check if any animation exists for a character
@@ -51,7 +53,14 @@ public class CharactersData {
         Character character = findCharacterByName(characterName);
         return character != null && character.getProjectiles().contains(projectileName);
     }
-
+    public static boolean projectileExists(String projectileName) {
+        for (Character c : characters) {
+            if(c.getProjectiles().contains(projectileName)){
+                return true;
+            }
+        }
+        return false ;
+    }
     // Helper method to find a character by name
     private static Character findCharacterByName(String name) {
         return characters.stream()
