@@ -167,16 +167,18 @@ public class Players {
         return players;
     }
     public synchronized void handleHitboxes(ArrayList<Hitbox> hitboxes, DatagramSocket socket){
-        ArrayList<Hitbox> hitboxesToRemove = new ArrayList<>();
         for (Player player : players) {
             for (Hitbox hitbox : hitboxes) {
                 if(hitbox.getOwner().equals(player.getId())){
                     continue;
                 }
                 else if(player.getHitbox().collideWith(hitbox)){
+                    if(Server.usedHitboxs.contains(hitbox)){
+                        continue;
+                    }
                     int damage =HitboxDamageData.getDamage(hitbox.getName());
                     player.damage(damage);
-                    hitboxesToRemove.add(hitbox);
+                    Server.usedHitboxs.add(hitbox);
                     try {
                         Server.inviaMessaggio("Hurt", player.getAddress(), player.getPort(), socket);
                     } catch (IOException e) {
@@ -185,6 +187,5 @@ public class Players {
                 }
             }
         }
-        hitboxes.removeAll(hitboxesToRemove);
     }
 }

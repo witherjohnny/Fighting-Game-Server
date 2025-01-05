@@ -45,7 +45,7 @@ public class ThreadRicevitore extends Thread{
                     players.setAction(address, port, action);
                 }else if(messaggio.startsWith("hitboxes")){
                     String[] righe = messaggio.split("\n");
-                    ArrayList<Hitbox> necessaryHitboxes = new ArrayList<Hitbox>();
+                    //ArrayList<Hitbox> necessaryHitboxes = new ArrayList<Hitbox>();
                     for (int i = 1; i < righe.length; i++) {
                         String[] data = righe[i].split(";");
                         String id = data[0];
@@ -63,14 +63,14 @@ public class ThreadRicevitore extends Thread{
                         if(existsingHitbox == null){
                             Hitbox hitbox = new Hitbox(id,address,port, name, x, y, width, height);
                             Server.hitboxes.add(hitbox);
-                            necessaryHitboxes.add(hitbox);
+                            //necessaryHitboxes.add(hitbox);
                         }else{
                             existsingHitbox.setX(x);
                             existsingHitbox.setY(y);
-                            necessaryHitboxes.add(existsingHitbox);
+                            //necessaryHitboxes.add(existsingHitbox);
                         }
                     }
-                    removeUnnecessaryHitboxes(necessaryHitboxes);
+                    //removeUnnecessaryHitboxes(necessaryHitboxes);
                 }
                 //GESTIONE LOGICA CONNESSIONE AL SERVER E SCELTA PERSONAGGIO
                 else if (messaggio.equals("Join")) {
@@ -120,6 +120,10 @@ public class ThreadRicevitore extends Thread{
                 }else if(messaggio.equals("GameLoaded")){
                    
                     players.broadcastData(socket);
+                }else if(messaggio.startsWith("removeHitbox")){
+                    String[] data = messaggio.split(";");
+                    String id = data[1];
+                    removeHitboxById(id);
                 }
                 
             } catch (Exception e) {
@@ -148,6 +152,12 @@ public class ThreadRicevitore extends Thread{
         for (Hitbox hitboxToRemove : hitboxesToRemove) {
             
             Server.hitboxes.remove(hitboxToRemove);
+        }
+    }
+    private void removeHitboxById(String id) {
+        synchronized (Server.hitboxes) {
+            Server.hitboxes.removeIf(hitbox -> hitbox.getId().equals(id));
+            Server.usedHitboxs.removeIf(hitbox -> hitbox.getId().equals(id));
         }
     }
 }

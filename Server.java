@@ -17,6 +17,7 @@ public class Server {
     public static boolean gameStarted = false;
     private static Players players = new Players();
     public static ArrayList<Hitbox> hitboxes = new ArrayList<Hitbox>();
+    public static ArrayList<Hitbox> usedHitboxs = new ArrayList<Hitbox>();
     public static void main(String[] args) throws IOException {
         CharactersData.loadCharacters();
         Semaphore semaphore = new Semaphore(1); 
