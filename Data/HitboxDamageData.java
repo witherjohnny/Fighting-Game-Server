@@ -8,13 +8,13 @@ public class HitboxDamageData {
 
     public static void loadHitboxDamageData() {
         // Load damage values for each hitbox name
-        hitboxDamageMap.put("Fireball", 10);
-        hitboxDamageMap.put("Flame_Jet", 15);
-        hitboxDamageMap.put("AreaAttack", 20);
-        hitboxDamageMap.put("Attack_1", 5);
-        hitboxDamageMap.put("Attack_2", 7);
-        hitboxDamageMap.put("Charge", 12);
-        hitboxDamageMap.put("Run+Attack", 8);
+        hitboxDamageMap.put("Fireball", 0);
+        hitboxDamageMap.put("Flame_Jet", 10);
+        hitboxDamageMap.put("AreaAttack", 10);
+        hitboxDamageMap.put("Attack_1", 3);
+        hitboxDamageMap.put("Attack_2", 5);
+        hitboxDamageMap.put("Charge", 10);
+        hitboxDamageMap.put("Run+Attack", 5);
         hitboxDamageMap.put("Protect", 0);
     }
 

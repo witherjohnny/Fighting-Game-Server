@@ -24,7 +24,7 @@ public class Server {
         ThreadBroadcast threadBroadcast = new ThreadBroadcast(socket,players,semaphore);
         ThreadRicevitore threadRicevitore = new ThreadRicevitore(socket,players,semaphore);
         threadRicevitore.start();
-
+        threadBroadcast.start();
         while (true) {
             try {
                 semaphore.acquire();
@@ -38,7 +38,9 @@ public class Server {
                     if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
                         gameStarted = true;
                         players.inviaMessaggio("Gioco iniziato", socket);
-                        threadBroadcast.start();
+                        Thread.sleep(10);
+                        threadBroadcast.startBroadcast();
+
                     }   
                 }else{
                     players.handleHitboxes(hitboxes,socket);
@@ -47,6 +49,11 @@ public class Server {
             } catch (Exception e) {
             }finally{
                 semaphore.release();
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

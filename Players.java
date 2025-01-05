@@ -95,8 +95,6 @@ public class Players {
         }
     }
     public synchronized boolean remove(InetAddress address, int port){
-        String id = address.toString()+":"+port;
-        id = Server.md5(id);
         Player p = this.find(address, port);
         if(p != null){
             players.remove(p);
@@ -105,6 +103,9 @@ public class Players {
         return false;
     }
     public Player find(InetAddress address, int port){
+        if (address == null) {
+            return null;
+        }
         for (Player player : players) {
             String id = address.toString()+":"+port;
             id = Server.md5(id);
@@ -165,7 +166,8 @@ public class Players {
     public ArrayList<Player> getPlayers() {
         return players;
     }
-    public void handleHitboxes(ArrayList<Hitbox> hitboxes, DatagramSocket socket){
+    public synchronized void handleHitboxes(ArrayList<Hitbox> hitboxes, DatagramSocket socket){
+        ArrayList<Hitbox> hitboxesToRemove = new ArrayList<>();
         for (Player player : players) {
             for (Hitbox hitbox : hitboxes) {
                 if(hitbox.getOwner().equals(player.getId())){
@@ -174,6 +176,7 @@ public class Players {
                 else if(player.getHitbox().collideWith(hitbox)){
                     int damage =HitboxDamageData.getDamage(hitbox.getName());
                     player.damage(damage);
+                    hitboxesToRemove.add(hitbox);
                     try {
                         Server.inviaMessaggio("Hurt", player.getAddress(), player.getPort(), socket);
                     } catch (IOException e) {
@@ -182,5 +185,6 @@ public class Players {
                 }
             }
         }
+        hitboxes.removeAll(hitboxesToRemove);
     }
 }

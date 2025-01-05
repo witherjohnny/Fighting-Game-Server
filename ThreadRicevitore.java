@@ -1,6 +1,7 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import Enum.Direction;
@@ -10,7 +11,6 @@ public class ThreadRicevitore extends Thread{
     private Semaphore semaphore;
     private DatagramSocket socket;
     private Players players;
-
 
     public ThreadRicevitore(DatagramSocket socket, Players players, Semaphore semaphore){
         this.socket = socket;
@@ -45,6 +45,7 @@ public class ThreadRicevitore extends Thread{
                     players.setAction(address, port, action);
                 }else if(messaggio.startsWith("hitboxes")){
                     String[] righe = messaggio.split("\n");
+                    ArrayList<Hitbox> necessaryHitboxes = new ArrayList<Hitbox>();
                     for (int i = 1; i < righe.length; i++) {
                         String[] data = righe[i].split(";");
                         String id = data[0];
@@ -62,11 +63,14 @@ public class ThreadRicevitore extends Thread{
                         if(existsingHitbox == null){
                             Hitbox hitbox = new Hitbox(id,address,port, name, x, y, width, height);
                             Server.hitboxes.add(hitbox);
+                            necessaryHitboxes.add(hitbox);
                         }else{
                             existsingHitbox.setX(x);
                             existsingHitbox.setY(y);
+                            necessaryHitboxes.add(existsingHitbox);
                         }
                     }
+                    removeUnnecessaryHitboxes(necessaryHitboxes);
                 }
                 //GESTIONE LOGICA CONNESSIONE AL SERVER E SCELTA PERSONAGGIO
                 else if (messaggio.equals("Join")) {
@@ -114,9 +118,8 @@ public class ThreadRicevitore extends Thread{
                     players.setReady(address, port, false);
                     
                 }else if(messaggio.equals("GameLoaded")){
-                    Player player = players.find(address, port);
-                    String message="local;"+player.toCSV();
-                    Server.inviaMessaggio(message, player.getAddress(), player.getPort(), socket);
+                   
+                    players.broadcastData(socket);
                 }
                 
             } catch (Exception e) {
@@ -127,5 +130,24 @@ public class ThreadRicevitore extends Thread{
         }
 
     }
-
+    private void removeUnnecessaryHitboxes(ArrayList<Hitbox> hitboxes) {
+        ArrayList<Hitbox> hitboxesToRemove = new ArrayList<Hitbox>();
+    
+        for (Hitbox h : hitboxes) {
+            boolean found = false;
+            for (Hitbox hitbox : Server.hitboxes) {
+                if (hitbox.getId() == h.getId()) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                hitboxesToRemove.add(h);
+            }
+        }
+        for (Hitbox hitboxToRemove : hitboxesToRemove) {
+            
+            Server.hitboxes.remove(hitboxToRemove);
+        }
+    }
 }
