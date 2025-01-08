@@ -45,9 +45,11 @@ public class Server {
                     }   
                 }else{
                     players.handleHitboxes(hitboxes,socket);
+                    players.handleDeath(socket,threadBroadcast);
                 }
 
             } catch (Exception e) {
+                System.out.println("Errore: "+ e.getMessage());
             }finally{
                 semaphore.release();
             }

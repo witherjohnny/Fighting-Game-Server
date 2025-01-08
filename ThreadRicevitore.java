@@ -19,7 +19,6 @@ public class ThreadRicevitore extends Thread{
     }
     @Override
     public void run() {
-        
         System.out.println("Server avviato sulla porta " + Server.PORT);
         //ThreadBroadcast broadcast = new ThreadBroadcast(players, socket);
         byte[] buffer = new byte[Server.BUFFER_SIZE];
@@ -81,14 +80,20 @@ public class ThreadRicevitore extends Thread{
     
                         //salvataggio informazioni del client che si è connesso in modo da porterlo "riconttattare"
                         Player nuovoPlayer = null;
-                        if(players.size() ==0){
+                        if(players.size() ==0){//TODO: gestire meglio gli spawn
                             nuovoPlayer = new Player(address, port, 300, 300,128,128,Direction.Right, "Idle",100); 
                         }else if(players.size() ==1){
                             nuovoPlayer = new Player(address, port, 800, 300,128,128,Direction.Left, "Idle",100); 
                         }
                         if(nuovoPlayer != null){
-                            players.add(nuovoPlayer);
-                            Server.inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
+                            //se non trova nessun player con lo stesso indirizzo lo aggiunge
+                            Player p =players.find(address, port);
+                            if(p ==null){
+                                players.add(nuovoPlayer);
+                                Thread.sleep(10);
+                                Server.inviaMessaggio("Benvenuto! aspettando avversario...", address, port, socket);
+    
+                            }
                         }
                         else{
                             System.out.println("errore in creazione nuovo player");

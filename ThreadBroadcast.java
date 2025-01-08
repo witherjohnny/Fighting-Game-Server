@@ -24,23 +24,26 @@ public class ThreadBroadcast extends Thread {
                 try {
                     semaphore.acquire();
                     players.broadcastData(socket);
-                    String message = "hitboxes\n";
-                    for (Player p : this.players.getPlayers()) {
-                        for (Hitbox hitbox : Server.hitboxes) {
-                            String owner = hitbox.getOwner();
-                            if (!p.getId().equals(owner)) {
-                                continue;
+                    if(Server.hitboxes.size() >0){
+                        String message = "hitboxes\n";
+                        for (Player p : this.players.getPlayers()) {
+                            for (Hitbox hitbox : Server.hitboxes) {
+                                String owner = hitbox.getOwner();
+                                if (!p.getId().equals(owner)) {
+                                    continue;
+                                }
+                                if (CharactersData.projectileExists(hitbox.getName())) {
+                                    message += hitbox.toCSV() + "\n";
+                                }
                             }
-                            if (CharactersData.projectileExists(hitbox.getName())) {
-                                message += hitbox.toCSV() + "\n";
+                            message.trim();
+                            try {
+                                Server.inviaMessaggio(message, p.getAddress(), p.getPort(), socket);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
-                        message.trim();
-                        try {
-                            Server.inviaMessaggio(message, p.getAddress(), p.getPort(), socket);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+    
                     }
 
                     semaphore.release();

@@ -188,4 +188,26 @@ public class Players {
             }
         }
     }
+
+    public synchronized void handleDeath(DatagramSocket socket, ThreadBroadcast threadBroadcast) {
+        for (Player player : players) {
+            if (player.getHealth() <= 0) {
+                try {
+                    threadBroadcast.stopBroadcast();
+                    player.setReady(false);
+                    Server.inviaMessaggio("You Lose", player.getAddress(), player.getPort(), socket);
+                    for (Player otherPlayer : players) {
+                        if (!otherPlayer.equals(player)) {
+                            otherPlayer.setReady(false);
+                            Server.inviaMessaggio("You Win", otherPlayer.getAddress(), otherPlayer.getPort(), socket);
+                        }
+                    }
+                    Server.gameStarted=false;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
