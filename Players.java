@@ -210,4 +210,24 @@ public class Players {
             }
         }
     }
+    public void resetHealth(){
+        for (Player player : players) {
+            player.setHealth(100);
+        }
+    }
+    public void resetSpawnPoint() {
+        int i=0;
+        for (Player player : players) {
+            if(i == 0){
+                player.setX(400);
+                player.setY(300); 
+    
+            }else{
+                player.setX(1000);
+                player.setY(300); 
+
+            }
+            i++;
+        }
+    }
 }

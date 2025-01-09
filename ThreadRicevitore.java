@@ -1,7 +1,6 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import Enum.Direction;
@@ -139,7 +138,7 @@ public class ThreadRicevitore extends Thread{
         }
 
     }
-    private void removeUnnecessaryHitboxes(ArrayList<Hitbox> hitboxes) {
+   /*  private void removeUnnecessaryHitboxes(ArrayList<Hitbox> hitboxes) {
         ArrayList<Hitbox> hitboxesToRemove = new ArrayList<Hitbox>();
     
         for (Hitbox h : hitboxes) {
@@ -158,7 +157,7 @@ public class ThreadRicevitore extends Thread{
             
             Server.hitboxes.remove(hitboxToRemove);
         }
-    }
+    } */
     private void removeHitboxById(String id) {
         synchronized (Server.hitboxes) {
             Server.hitboxes.removeIf(hitbox -> hitbox.getId().equals(id));

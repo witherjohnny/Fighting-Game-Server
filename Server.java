@@ -39,6 +39,8 @@ public class Server {
                     if(players.isAllReady() && players.size() == MAX_PLAYERS){//tutti i player sono pronti, vengono notificati, e passiamo alla pagina di gioco
                         gameStarted = true;
                         players.inviaMessaggio("Gioco iniziato", socket);
+                        players.resetHealth();
+                        players.resetSpawnPoint();
                         Thread.sleep(10);
                         threadBroadcast.startBroadcast();
 
