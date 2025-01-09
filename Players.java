@@ -230,4 +230,11 @@ public class Players {
             i++;
         }
     }
+    public void handleFallOutOfTheMap() {
+        for (Player player : players) {
+            if(player.getY()>1200){
+                player.setHealth(0);
+            }
+        }
+    }
 }

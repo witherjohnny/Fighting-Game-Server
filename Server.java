@@ -48,6 +48,7 @@ public class Server {
                 }else{
                     players.handleHitboxes(hitboxes,socket);
                     players.handleDeath(socket,threadBroadcast);
+                    players.handleFallOutOfTheMap();
                 }
 
             } catch (Exception e) {
